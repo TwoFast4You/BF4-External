@@ -1,4 +1,4 @@
-# ProjectLocker v2.1
+# ProjectLocker v2.2
 シンプルなBattlefield 4の外部チート。  
 初めてチートを作った時のプロジェクトを流用しているのでちょっとアレなコードのところはあるかもね。  
 
