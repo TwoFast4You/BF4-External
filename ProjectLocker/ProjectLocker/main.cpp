@@ -114,13 +114,13 @@ int main(int, char**)
         ImGui_ImplWin32_NewFrame();
         ImGui::NewFrame();
 
-        Ov.Info();
+        v->Info();
 
         if (m_esp)
-            Ov.ESP();
+            v->ESP();
 
         if (ShowMenu)
-            Ov.Menu();
+            v->Menu();
 
         // Rendering
         ImGui::Render();
