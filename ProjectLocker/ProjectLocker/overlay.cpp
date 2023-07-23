@@ -185,14 +185,20 @@ void Overlay::ESP()
     DWORD_PTR LHealthComponent = m.RPM<DWORD_PTR>(LocalSoldier + 0x140);
     float LocalHealth = m.RPM<float>(LHealthComponent + 0x20);
     DWORD_PTR LPosComponent = m.RPM<DWORD_PTR>(LocalSoldier + 0x490);
-    Vector3 LocalPos = m.RPM<Vector3>(LPosComponent + 0x30);
+    Vector3 LocalPos = Vector3(0.f, 0.f, 0.f);
+    LocalPos = m.RPM<Vector3>(LPosComponent + 0x30);
 
     for (int i = 0; i < 70; i++)
     {
-        if (LocalHealth == 0.f || LocalHealth < 0.f)
+        if (LocalHealth <= 0.f && LocalPos == Vector3(0.f, 0.f, 0.f))
+        {
             Alive = false;
-        else
+            continue;
+        }
+        else 
+        {
             Alive = true;
+        }
 
         DWORD_PTR pClientPlayer = m.RPM<DWORD_PTR>(Player + (i * 0x08));
         DWORD_PTR pClientSoldier = m.RPM<DWORD_PTR>(pClientPlayer + OFFSET_SOLDIER);
