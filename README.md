@@ -1,6 +1,14 @@
-# ProjectLocker v2.2
+# ProjectLocker v3.0
 シンプルなBattlefield 4の外部チート。  
 初めてチートを作った時のプロジェクトを流用しているのでちょっとアレなコードのところはあるかもね。  
+
+## 機能
+[ESP]
+* Soldier ESP : 2D/3D Box, Line, HealthBar, Distance...
+* Vehicle ESP : 3D Box Only.
+[Misc]
+* NoRecoil/Spread
+* UnlockAll
 
 ## Q&A
 Q. PBSS Bypassはしてあるのか？  
