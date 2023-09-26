@@ -22,7 +22,6 @@ bool m_distance = true;
 int m_maxdist = 650;
 bool m_healthbar = true;
 bool Alive = false;
-float BoxHeight = 0.f;
 const char* BoxList[] = { "2D", "3D" };
 int m_boxstyle = 0;
 
@@ -39,9 +38,11 @@ ImVec4 color_Team = { 0.f, 1.f, 1.f, 1.f };
 
 float GetDistance(Vector3 value1, Vector3 value2);
 Vector3 GetBone(INT64 pSoldier, int bone_id);
+bool W2S(const Vector3& WorldPos, Vector2& ScreenPos);
 bool W2S(const Vector3& WorldPos, Vector3& ScreenPos);
 void DrawBox(AxisAlignedBox aabb, Vector3 m_Position, float Yaw, ImColor color);
 AxisAlignedBox AABB(DWORD_PTR soldier);
+void DrawAABB(AxisAlignedBox aabb, Matrix tranform, ImColor color);
 
 void Overlay::Info()
 {
@@ -167,6 +168,9 @@ void Overlay::Menu()
     ImGui::End();
 }
 
+AxisAlignedBox VehicleAABB;
+Matrix VehicleTranfsorm;
+
 void Overlay::ESP()
 {
     ImGui::SetNextWindowPos(ImVec2(0, 0));
@@ -202,6 +206,7 @@ void Overlay::ESP()
 
         DWORD_PTR pClientPlayer = m.RPM<DWORD_PTR>(Player + (i * 0x08));
         DWORD_PTR pClientSoldier = m.RPM<DWORD_PTR>(pClientPlayer + OFFSET_SOLDIER);
+        DWORD_PTR pVehicleEntity = m.RPM<DWORD_PTR>(pClientPlayer + 0x14C0);
 
         // Invalid Player
         if (pClientPlayer == 0)
@@ -209,10 +214,25 @@ void Overlay::ESP()
         else if (pClientPlayer == LocalPlayer)
             continue;
 
+        // �ԗ��ɏ���Ă�����
+        if (pVehicleEntity)
+        {
+            DWORD_PTR pDynamicPhysicsEntity = m.RPM<DWORD_PTR>(pVehicleEntity + 0x238);
+
+            if (pDynamicPhysicsEntity)
+            {
+                DWORD_PTR pPhysicsEntity = m.RPM<DWORD_PTR>(pDynamicPhysicsEntity + 0xA0); // EntityTransform
+                VehicleTranfsorm = m.RPM<Matrix>(pPhysicsEntity + 0x0); // Transform
+                VehicleAABB = m.RPM<AxisAlignedBox>(pVehicleEntity + 0x250);
+
+                DrawAABB(VehicleAABB, VehicleTranfsorm, ImColor(1.f, 1.f, 1.f, 1.f));
+            }
+        }
+
         // Spectaror worning - Example
         bool spect = m.RPM<bool>(pClientPlayer + 0x13C9);
         if (spect)
-            String(ImVec2(GameSize.right / 2.f, GameSize.bottom / 2.f), ImColor(1.f, 0.f, 0.f, 1.f), "Wow! Spectator found!");
+            String(ImVec2(GameSize.right / 2.f, GameSize.bottom / 2.f), ImColor(1.f, 0.f, 0.f, 1.f), "Spectator found!");
 
         // Team
         int Team = m.RPM<int>(pClientPlayer + OFFSET_TEAM);
@@ -249,31 +269,41 @@ void Overlay::ESP()
             continue;
 
         // Set ESP color
-        ImColor color;
+        ImColor color = Visible ? color_Visible : color_Normal;
 
-        if (Visible)
-            color = color_Visible;
-        else
-            color = color_Normal;
-        
         if (m_TeamESP)
-        {
             if (Team == LocalTeam)
                 color = color_Team;
-        }
 
-        // 3D Box
-        float Yaw = m.RPM<float>(pClientSoldier + 0x4D8);
-        DrawBox(AABB(pClientSoldier), PlayerOrigin, Yaw, color);
+        Vector3 Top = PlayerOrigin + AABB(pClientSoldier).Max;
+        Vector3 Btm = PlayerOrigin + AABB(pClientSoldier).Min;
+        Vector2 BoxTop, BoxBtm;
+        W2S(Top, BoxTop);
+        W2S(Btm, BoxBtm);
 
-        // 2D Box
-        float BoxWidth = BoxHeight / 4;
-        if (m_box && m_boxstyle == 0)
+        float BoxMiddle = pScreen.x;
+        float Height = BoxBtm.y - BoxTop.y;
+        float Width = Height / 4.f;
+
+        // Box
+        if (m_box)
         {
-            Line(ImVec2(pScreen.x - BoxWidth, pScreen.y), ImVec2(pScreen.x + BoxWidth, pScreen.y), color, 1);
-            Line(ImVec2(pScreen.x - BoxWidth, pScreen.y - BoxHeight), ImVec2(pScreen.x + BoxWidth, pScreen.y - BoxHeight), color, 1);
-            Line(ImVec2(pScreen.x - BoxWidth, pScreen.y), ImVec2(pScreen.x - BoxWidth, pScreen.y - BoxHeight), color, 1);
-            Line(ImVec2(pScreen.x + BoxWidth, pScreen.y), ImVec2(pScreen.x + BoxWidth, pScreen.y - BoxHeight), color, 1);
+            float Yaw = m.RPM<float>(pClientSoldier + 0x4D8);
+
+            switch (m_boxstyle)
+            {
+            case 0: // 2D
+                Line(ImVec2(pScreen.x - Width, pScreen.y), ImVec2(pScreen.x + Width, pScreen.y), color, 1);
+                Line(ImVec2(pScreen.x - Width, pScreen.y - Height), ImVec2(pScreen.x + Width, pScreen.y - Height), color, 1);
+                Line(ImVec2(pScreen.x - Width, pScreen.y), ImVec2(pScreen.x - Width, pScreen.y - Height), color, 1);
+                Line(ImVec2(pScreen.x + Width, pScreen.y), ImVec2(pScreen.x + Width, pScreen.y - Height), color, 1);
+                break;
+            case 1: // 3D
+                DrawBox(AABB(pClientSoldier), PlayerOrigin, Yaw, color);
+                break;
+            default:
+                break;
+            }
         }
 
         // Line
@@ -305,8 +335,8 @@ void Overlay::ESP()
         // Health Bar
         if (m_healthbar)
         {
-            BaseBar(pScreen.x - BoxWidth - 5, pScreen.y + 1, 3, -BoxHeight - 1, 100);
-            ProgressBar(pScreen.x - BoxWidth - 4, pScreen.y, 1, -BoxHeight, Health, 100);
+            BaseBar(pScreen.x - Width - 5, pScreen.y + 1, 3, -Height - 1, 100);
+            ProgressBar(pScreen.x - Width - 4, pScreen.y, 1, -Height, Health, 100);
         }
 
         // Distance
@@ -386,6 +416,42 @@ bool W2S(const Vector3& WorldPos, Vector3& ScreenPos)
     return true;
 }
 
+bool W2S(const Vector3& WorldPos, Vector2& ScreenPos)
+{
+    DWORD_PTR GameRenderer = m.RPM<DWORD_PTR>(OFFSET_GAMERENDERER);
+    DWORD_PTR RenderView = m.RPM<DWORD_PTR>(GameRenderer + 0x60);
+
+    if (RenderView == 0)
+        return false;
+
+    DWORD_PTR DXRenderer = m.RPM<DWORD_PTR>(OFFSET_DXRENDERER);
+    DWORD_PTR m_pScreen = m.RPM<DWORD_PTR>(DXRenderer + 0x38);
+
+    if (m_pScreen == 0)
+        return false;
+
+    Matrix view_x_projection = m.RPM<Matrix>(RenderView + 0x420);
+
+    int ScreenWidth = m.RPM<int>(m_pScreen + 0x58);
+    int ScreenHeight = m.RPM<int>(m_pScreen + 0x5C);
+
+    float cX = ScreenWidth * 0.5f;
+    float cY = ScreenHeight * 0.5f;
+
+    float w = view_x_projection(0, 3) * WorldPos.x + view_x_projection(1, 3) * WorldPos.y + view_x_projection(2, 3) * WorldPos.z + view_x_projection(3, 3);
+
+    if (w < 0.65f)
+        return false;
+
+    float x = view_x_projection(0, 0) * WorldPos.x + view_x_projection(1, 0) * WorldPos.y + view_x_projection(2, 0) * WorldPos.z + view_x_projection(3, 0);
+    float y = view_x_projection(0, 1) * WorldPos.x + view_x_projection(1, 1) * WorldPos.y + view_x_projection(2, 1) * WorldPos.z + view_x_projection(3, 1);
+
+    ScreenPos.x = cX + cX * x / w;
+    ScreenPos.y = cY - cY * y / w;
+
+    return true;
+}
+
 AxisAlignedBox AABB(DWORD_PTR soldier)
 {
     AxisAlignedBox aabb = {};
@@ -432,23 +498,57 @@ void DrawBox(AxisAlignedBox aabb, Vector3 m_Position, float Yaw, ImColor color)
         || !W2S(blt, blt) || !W2S(flt, flt))
         return;
 
-    BoxHeight = fld.y - brb.y;
+    v->Line(ImVec2(fld.x, fld.y), ImVec2(brt.x, brt.y), color, 1.f);
+    v->Line(ImVec2(brb.x, brb.y), ImVec2(blt.x, blt.y), color, 1.f);
+    v->Line(ImVec2(fld.x, fld.y), ImVec2(brb.x, brb.y), color, 1.f);
+    v->Line(ImVec2(brt.x, brt.y), ImVec2(blt.x, blt.y), color, 1.f);
+    v->Line(ImVec2(frt.x, frt.y), ImVec2(bld.x, bld.y), color, 1.f);
+    v->Line(ImVec2(frd.x, frd.y), ImVec2(flt.x, flt.y), color, 1.f);
+    v->Line(ImVec2(frt.x, frt.y), ImVec2(frd.x, frd.y), color, 1.f);
+    v->Line(ImVec2(bld.x, bld.y), ImVec2(flt.x, flt.y), color, 1.f);
+    v->Line(ImVec2(frt.x, frt.y), ImVec2(fld.x, fld.y), color, 1.f);
+    v->Line(ImVec2(frd.x, frd.y), ImVec2(brb.x, brb.y), color, 1.f);
+    v->Line(ImVec2(brt.x, brt.y), ImVec2(bld.x, bld.y), color, 1.f);
+    v->Line(ImVec2(blt.x, blt.y), ImVec2(flt.x, flt.y), color, 1.f);
+}
 
-    if (m_box && m_boxstyle == 1)
-    {
-        v->Line(ImVec2(fld.x, fld.y), ImVec2(brt.x, brt.y), color, 1.f);
-        v->Line(ImVec2(brb.x, brb.y), ImVec2(blt.x, blt.y), color, 1.f);
-        v->Line(ImVec2(fld.x, fld.y), ImVec2(brb.x, brb.y), color, 1.f);
-        v->Line(ImVec2(brt.x, brt.y), ImVec2(blt.x, blt.y), color, 1.f);
-        v->Line(ImVec2(frt.x, frt.y), ImVec2(bld.x, bld.y), color, 1.f);
-        v->Line(ImVec2(frd.x, frd.y), ImVec2(flt.x, flt.y), color, 1.f);
-        v->Line(ImVec2(frt.x, frt.y), ImVec2(frd.x, frd.y), color, 1.f);
-        v->Line(ImVec2(bld.x, bld.y), ImVec2(flt.x, flt.y), color, 1.f);
-        v->Line(ImVec2(frt.x, frt.y), ImVec2(fld.x, fld.y), color, 1.f);
-        v->Line(ImVec2(frd.x, frd.y), ImVec2(brb.x, brb.y), color, 1.f);
-        v->Line(ImVec2(brt.x, brt.y), ImVec2(bld.x, bld.y), color, 1.f);
-        v->Line(ImVec2(blt.x, blt.y), ImVec2(flt.x, flt.y), color, 1.f);
-    }
+Vector3 Multiply(Vector3 vector, Matrix mat)
+{
+    return Vector3(mat._11 * vector.x + mat._21 * vector.y + mat._31 * vector.z,
+        mat._12 * vector.x + mat._22 * vector.y + mat._32 * vector.z,
+        mat._13 * vector.x + mat._23 * vector.y + mat._33 * vector.z);
+}
+
+void DrawAABB(AxisAlignedBox aabb, Matrix tranform, ImColor color)
+{
+    Vector3 m_Position = Vector3(tranform._41, tranform._42, tranform._43);
+    Vector3 fld = Multiply(Vector3(aabb.Min.x, aabb.Min.y, aabb.Min.z), tranform) + m_Position;
+    Vector3 brt = Multiply(Vector3(aabb.Max.x, aabb.Max.y, aabb.Max.z), tranform) + m_Position;
+    Vector3 bld = Multiply(Vector3(aabb.Min.x, aabb.Min.y, aabb.Max.z), tranform) + m_Position;
+    Vector3 frt = Multiply(Vector3(aabb.Max.x, aabb.Max.y, aabb.Min.z), tranform) + m_Position;
+    Vector3 frd = Multiply(Vector3(aabb.Max.x, aabb.Min.y, aabb.Min.z), tranform) + m_Position;
+    Vector3 brb = Multiply(Vector3(aabb.Max.x, aabb.Min.y, aabb.Max.z), tranform) + m_Position;
+    Vector3 blt = Multiply(Vector3(aabb.Min.x, aabb.Max.y, aabb.Max.z), tranform) + m_Position;
+    Vector3 flt = Multiply(Vector3(aabb.Min.x, aabb.Max.y, aabb.Min.z), tranform) + m_Position;
+
+    if (!W2S(fld, fld) || !W2S(brt, brt)
+        || !W2S(bld, bld) || !W2S(frt, frt)
+        || !W2S(frd, frd) || !W2S(brb, brb)
+        || !W2S(blt, blt) || !W2S(flt, flt))
+        return;
+
+    v->DrawLineEx(fld, flt, color);
+    v->DrawLineEx(flt, frt, color);
+    v->DrawLineEx(frt, frd, color);
+    v->DrawLineEx(frd, fld, color);
+    v->DrawLineEx(bld, blt, color);
+    v->DrawLineEx(blt, brt, color);
+    v->DrawLineEx(brt, brb, color);
+    v->DrawLineEx(brb, bld, color);
+    v->DrawLineEx(fld, bld, color);
+    v->DrawLineEx(frd, brb, color);
+    v->DrawLineEx(flt, blt, color);
+    v->DrawLineEx(frt, brt, color);
 }
 
 float GetDistance(Vector3 value1, Vector3 value2)
