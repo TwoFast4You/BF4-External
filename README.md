@@ -21,3 +21,4 @@ A. BF4のアンチチートはプログラムのSigベースの検出を行っ�
 このクソみたいなコードを書き直したいが、そんな時間も労力も費やしたくないのが現状である。
 
 ![タイトルなし](https://github.com/NCZLL/BF4-External/assets/128302647/1d79c21d-74d1-423b-9271-6bc55951c3a3)
+![image](https://github.com/NCZLL/BF4-External/assets/128302647/68b1e129-35d2-4474-ab75-3b1f6216040a)
