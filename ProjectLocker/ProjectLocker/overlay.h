@@ -26,6 +26,10 @@ public:
     {
         ImGui::GetWindowDrawList()->AddLine(b, f, color, w);
     }
+    void DrawLineEx(Vector3 a, Vector3 b, ImColor color)
+    {
+        ImGui::GetWindowDrawList()->AddLine(ImVec2(a.x, a.y), ImVec2(b.x, b.y), color, 1.f);
+    }
     void RectFilled(float x0, float y0, float x1, float y1, ImColor color, float rounding, int rounding_corners_flags)
     {
         ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(x0, y0), ImVec2(x1, y1), color, rounding, rounding_corners_flags);
