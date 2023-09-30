@@ -189,21 +189,10 @@ void Overlay::ESP()
     DWORD_PTR LHealthComponent = m.RPM<DWORD_PTR>(LocalSoldier + 0x140);
     float LocalHealth = m.RPM<float>(LHealthComponent + 0x20);
     DWORD_PTR LPosComponent = m.RPM<DWORD_PTR>(LocalSoldier + 0x490);
-    Vector3 LocalPos = Vector3(0.f, 0.f, 0.f);
-    LocalPos = m.RPM<Vector3>(LPosComponent + 0x30);
+    Vector3 LocalPos = m.RPM<Vector3>(LPosComponent + 0x30);
 
     for (int i = 0; i < 70; i++)
     {
-        if (LocalHealth <= 0.f && LocalPos == Vector3(0.f, 0.f, 0.f))
-        {
-            Alive = false;
-            continue;
-        }
-        else 
-        {
-            Alive = true;
-        }
-
         DWORD_PTR pClientPlayer = m.RPM<DWORD_PTR>(Player + (i * 0x08));
         DWORD_PTR pClientSoldier = m.RPM<DWORD_PTR>(pClientPlayer + OFFSET_SOLDIER);
         DWORD_PTR pVehicleEntity = m.RPM<DWORD_PTR>(pClientPlayer + 0x14C0);
@@ -214,7 +203,7 @@ void Overlay::ESP()
         else if (pClientPlayer == LocalPlayer)
             continue;
 
-        // �ԗ��ɏ���Ă�����
+        // 車両に乗っている場合
         if (pVehicleEntity)
         {
             DWORD_PTR pDynamicPhysicsEntity = m.RPM<DWORD_PTR>(pVehicleEntity + 0x238);
@@ -241,13 +230,13 @@ void Overlay::ESP()
         DWORD_PTR HealthComponent = m.RPM<DWORD_PTR>(pClientSoldier + 0x140);
         float Health = m.RPM<float>(HealthComponent + 0x20);
 
-        // Pos
+        // Position
         DWORD_PTR PosComponent = m.RPM<DWORD_PTR>(pClientSoldier + 0x490);
         Vector3 PlayerOrigin = m.RPM<Vector3>(PosComponent + 0x30);
         float distance = GetDistance(LocalPos, PlayerOrigin);
 
         // Check ESP MaxDistance
-        if (m_maxdist < (int)distance)
+        if (m_maxdist < distance)
             continue;
 
         // Visible
@@ -324,6 +313,11 @@ void Overlay::ESP()
             {
                 Vector3 Bone1 = GetBone(pClientSoldier, aSkeleton[i][0]);
                 Vector3 Bone2 = GetBone(pClientSoldier, aSkeleton[i][1]);
+
+                // Check
+                if (Bone1 == Vector3(0.f, 0.f, 0.f) || Bone2 == Vector3(0.f, 0.f, 0.f))
+                    continue;
+                
                 Vector3 Out1, Out2, Out3;
                 if (W2S(Bone1, Out1) && W2S(Bone2, Out2))
                 {
