@@ -27,7 +27,7 @@ int main()
     GetClientRect(m.GameHwnd, &Ct->GameSize);
     ClientToScreen(m.GameHwnd, &Ct->GamePOINT);
 
-    // Create Overlay - TopMost‚Å‚ ‚é•K—v‚Í‚È‚¢
+    // Create Overlay
     WNDCLASSEXA wc = { sizeof(WNDCLASSEXA), 0, WndProc, 0, 0, NULL, NULL, NULL, NULL, "NULL", "Wip", NULL };
     RegisterClassExA(&wc);
     OverlayHwnd = CreateWindowExA(WS_EX_TRANSPARENT | WS_EX_LAYERED | WS_EX_TOPMOST | WS_EX_TOOLWINDOW, wc.lpszClassName, wc.lpszMenuName, WS_POPUP, Ct->GamePOINT.x, Ct->GamePOINT.y, Ct->GameSize.right, Ct->GameSize.bottom, NULL, NULL, wc.hInstance, NULL);
