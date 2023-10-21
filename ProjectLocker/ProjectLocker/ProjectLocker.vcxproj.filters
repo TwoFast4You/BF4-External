@@ -19,13 +19,22 @@
     <Filter Include="Utils">
       <UniqueIdentifier>{b2142a71-da16-4e64-8d09-2b16523f0b6e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Utils\Memory">
+      <UniqueIdentifier>{d82ddb98-a4fa-4800-af56-2f9254a58c01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils\SimpleMath">
+      <UniqueIdentifier>{bdfe8eb6-7e75-47d5-87e4-3f59cb453873}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="overlay.cpp">
+    <ClCompile Include="core.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\Memory\Memory.cpp">
+      <Filter>Utils\Memory</Filter>
     </ClCompile>
     <ClCompile Include="ImGui\imgui.cpp">
       <Filter>ImGui</Filter>
@@ -48,22 +57,19 @@
     <ClCompile Include="ImGui\imgui_widgets.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="ImGui\customed.cpp">
-      <Filter>ImGui</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Utils\memory.h">
+    <ClInclude Include="Utils\NotSDK.h">
       <Filter>Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Utils\offset.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\SimpleMath.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="overlay.h">
+    <ClInclude Include="core.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Memory\Memory.h">
+      <Filter>Utils\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\SimpleMath\SimpleMath.h">
+      <Filter>Utils\SimpleMath</Filter>
     </ClInclude>
     <ClInclude Include="ImGui\imconfig.h">
       <Filter>ImGui</Filter>
@@ -89,13 +95,10 @@
     <ClInclude Include="ImGui\imstb_truetype.h">
       <Filter>ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="ImGui\customed.h">
-      <Filter>ImGui</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Utils\SimpleMath.inl">
-      <Filter>Utils</Filter>
+    <None Include="Utils\SimpleMath\SimpleMath.inl">
+      <Filter>Utils\SimpleMath</Filter>
     </None>
   </ItemGroup>
 </Project>
