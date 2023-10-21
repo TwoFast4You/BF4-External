@@ -72,7 +72,15 @@ void Cheat::Menu()
         ImGui::Checkbox("Distance", &v_Distance);
         break;
     case 1:
+        ImGui::NewLine();
+        ImGui::SeparatorText("System");
+        ImGui::Checkbox("AutoWindowFocus", &AutoWindowFocus);
+
+        ImGui::NewLine();
+        ImGui::SeparatorText("Game);
         ImGui::Checkbox("SwayEditor", &SwayEditor);
+        if (SwayEditor)
+            ImGui::SliderFloat("Sway", &SwayValue, 0.f, 1.f);
         ImGui::Checkbox("UnlockAll", &UnlockAll);
         break;
     case 2:
@@ -119,8 +127,6 @@ void Cheat::Menu()
         ImGui::Combo("BoxStyle", &v_BoxStyle, BoxList, IM_ARRAYSIZE(BoxList));
         break;
     case 1:
-        if (SwayEditor)
-            ImGui::SliderFloat("Sway", &SwayValue, 0.f, 1.f);
         break;
     case 2:
         break;
