@@ -77,7 +77,7 @@ void Cheat::Menu()
         ImGui::Checkbox("AutoWindowFocus", &AutoWindowFocus);
 
         ImGui::NewLine();
-        ImGui::SeparatorText("Game);
+        ImGui::SeparatorText("Game");
         ImGui::Checkbox("SwayEditor", &SwayEditor);
         if (SwayEditor)
             ImGui::SliderFloat("Sway", &SwayValue, 0.f, 1.f);
