@@ -1,98 +1,65 @@
-#include "overlay.h"
+#include "core.h"
 
-Memory m;
-Overlay Ov, * v = &Ov;
-HWND hwnd;
-RECT GameSize;
-POINT GamePos;
+Cheat c, * Ct = &c;
 
+HWND OverlayHwnd;
 bool Run = true;
-bool ShowMenu = false;
-bool m_esp = true;
-bool SwayEditor = false;
-float SwayV = 0.95f;
-bool UnlockAll = false;
-extern bool Alive;
+bool ShowMenu = true;
+bool AutoWindowFocus = true;
+int MenuKey = VK_INSERT;
 
 bool IsKeyDown(int VK);
-void CheatFunc();
 void CThread();
 
-int main(int, char**)
+//int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow)
+int main()
 {
-    SetConsoleTitleA("Battlefield 4 [ unknowncheats.me ]");
+    // Fix DIP Scale
+    SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_SYSTEM_AWARE);
 
-    HWND Ghwnd = FindWindowA(NULL, "Battlefield 4");
-    if (!Ghwnd)
-    {
-        printf("[-] Please open BF4...\n");
-
-        while (!Ghwnd)
-        {
-            Ghwnd = FindWindowA(NULL, "Battlefield 4");
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-        }
-    }
+    // Init Memory
+    if (!m.Init())
+        return -1;
 
     // Get window info
-    SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_SYSTEM_AWARE);
-    GetClassNameA(Ghwnd, Ov.ClassName, sizeof(Ov.ClassName));
-    GetWindowTextA(Ghwnd, Ov.MenuName, sizeof(Ov.MenuName));
-    GetClientRect(Ghwnd, &GameSize);
-    ClientToScreen(Ghwnd, &GamePos);
+    GetClassNameA(m.GameHwnd, Ct->ClassName, sizeof(Ct->ClassName));
+    GetWindowTextA(m.GameHwnd, Ct->MenuName, sizeof(Ct->MenuName));
+    GetClientRect(m.GameHwnd, &Ct->GameSize);
+    ClientToScreen(m.GameHwnd, &Ct->GamePOINT);
 
-    GetWindowThreadProcessId(Ghwnd, &m.PID);
-    m.pHandle = OpenProcess(PROCESS_ALL_ACCESS, FALSE, m.PID);
-
-    if (!m.pHandle)
-    {
-        printf("[-] Can't get pHandle\n");
-        system("PAUSE");
-        return 0;
-    }
-
-    printf("[+] Ready!\n");
-    system("cls");
-    printf("MenuKey : Insert");
-
-    // Create Overlay
-    WNDCLASSEXA wc = { sizeof(WNDCLASSEXA), 0, WndProc, 0, 0, NULL, NULL, NULL, NULL, "GG", "WP", NULL };
+    // Create Overlay - TopMost�ł���K�v�͂Ȃ�
+    WNDCLASSEXA wc = { sizeof(WNDCLASSEXA), 0, WndProc, 0, 0, NULL, NULL, NULL, NULL, "NULL", "Wip", NULL };
     RegisterClassExA(&wc);
-    hwnd = CreateWindowExA(WS_EX_TRANSPARENT | WS_EX_LAYERED | WS_EX_TOPMOST | WS_EX_TOOLWINDOW, wc.lpszClassName, wc.lpszMenuName, WS_POPUP, GamePos.x, GamePos.y, GameSize.right, GameSize.bottom, NULL, NULL, wc.hInstance, NULL); // ToDo : Set your screen size
-    SetLayeredWindowAttributes(hwnd, RGB(0, 0, 0), 255, LWA_ALPHA);
+    OverlayHwnd = CreateWindowExA(WS_EX_TRANSPARENT | WS_EX_LAYERED | WS_EX_TOPMOST | WS_EX_TOOLWINDOW, wc.lpszClassName, wc.lpszMenuName, WS_POPUP, Ct->GamePOINT.x, Ct->GamePOINT.y, Ct->GameSize.right, Ct->GameSize.bottom, NULL, NULL, wc.hInstance, NULL);
+    SetLayeredWindowAttributes(OverlayHwnd, RGB(0, 0, 0), 255, LWA_ALPHA);
     MARGINS margin = { -1 };
-    DwmExtendFrameIntoClientArea(hwnd, &margin);
+    DwmExtendFrameIntoClientArea(OverlayHwnd, &margin);
 
-    // Initialize Direct3D
-    if (!CreateDeviceD3D(hwnd))
+    if (!CreateDeviceD3D(OverlayHwnd))
     {
         CleanupDeviceD3D();
         UnregisterClassA(wc.lpszClassName, wc.hInstance);
         return 1;
     }
 
-    // Show the window
-    ShowWindow(hwnd, SW_SHOWDEFAULT);
-    UpdateWindow(hwnd);
+    ShowWindow(OverlayHwnd, SW_SHOWDEFAULT);
+    UpdateWindow(OverlayHwnd);
 
-    // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
-    io.IniFilename = NULL;
+    io.IniFilename = nullptr;
+    io.LogFilename = nullptr;
 
-    // Setup Dear ImGui style
-    ImGui::StyleColorsDark();
-
-    // Setup Platform/Renderer backends
-    ImGui_ImplWin32_Init(hwnd);
-    ImGui_ImplDX11_Init(g_pd3dDevice, g_pd3dDeviceContext);
-
+    // Load ImGui Style.
     ImStyle();
 
-    // Our state
+    ImGui_ImplWin32_Init(OverlayHwnd);
+    ImGui_ImplDX11_Init(g_pd3dDevice, g_pd3dDeviceContext);
+
     ImVec4 clear_color = ImVec4(1.0f, 1.0f, 1.0f, 0.f);
 
+    // Create Cheat thread.
     HANDLE MainThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)CThread, NULL, 0, NULL);
     if (MainThread)
         CloseHandle(MainThread);
@@ -109,20 +76,22 @@ int main(int, char**)
                 Run = false;
         }
 
-        // Start the Dear ImGui frame
         ImGui_ImplDX11_NewFrame();
         ImGui_ImplWin32_NewFrame();
         ImGui::NewFrame();
 
-        v->Info();
+        /*--| ESP / Menu Core. |-------------------------------*/
 
-        if (m_esp)
-            v->ESP();
+        Ct->Info();
 
         if (ShowMenu)
-            v->Menu();
+            Ct->Menu();
 
-        // Rendering
+        if (Ct->m_ESP)
+            Ct->ESP();
+
+        /*-----------------------------------------------------*/
+
         ImGui::Render();
         const float clear_color_with_alpha[4] = { clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w };
         g_pd3dDeviceContext->OMSetRenderTargets(1, &g_mainRenderTargetView, NULL);
@@ -137,97 +106,83 @@ int main(int, char**)
     ImGui::DestroyContext();
 
     CleanupDeviceD3D();
-    DestroyWindow(hwnd);
+    DestroyWindow(OverlayHwnd);
     UnregisterClassA(wc.lpszClassName, wc.hInstance);
 
     return 0;
 }
 
-void CheatFunc()
-{
-    // Recoil / Spread
-    if (SwayEditor && Alive)
-    {
-        DWORD_PTR Weapon = m.RPM<DWORD_PTR>(OFFSET_WEAPON);
-
-        // Sway
-        DWORD_PTR weaponPtr = m.RPM<DWORD_PTR>(Weapon + 0x128);
-        weaponPtr = m.RPM<DWORD_PTR>(weaponPtr + 0x30);
-
-        if (weaponPtr && m.RPM<float>(weaponPtr + 0x430) != SwayV)
-        {
-            m.WPM<float>(weaponPtr + 0x430, SwayV);
-            m.WPM<float>(weaponPtr + 0x438, SwayV);
-            m.WPM<float>(weaponPtr + 0x434, SwayV);
-            m.WPM<float>(weaponPtr + 0x43C, SwayV);
-        }
-    }
-
-    // UnlockAll
-    if (UnlockAll)
-    {
-        DWORD_PTR SyncBFSetting = m.RPM<DWORD_PTR>(OFFSET_SYNCBFSETTING);
-
-        if (UnlockAll && m.RPM<bool>(SyncBFSetting + 0x54) == false)
-            m.WPM<bool>(SyncBFSetting + 0x54, true);
-    }
-}
-
 void CThread()
 {
+    // Set window style data
+    static LONG MenuStyle = WS_EX_TOPMOST | WS_EX_LAYERED | WS_EX_TOOLWINDOW;
+    static LONG ESPStyle = WS_EX_TOPMOST | WS_EX_TRANSPARENT | WS_EX_LAYERED | WS_EX_TOOLWINDOW;
+
+    // Thread Main loop
     while (Run)
     {
-        // ESP
+        // Toggle Menu - Default menu key : Insert
         static bool tmp = false;
-        static bool change = false;
-        if (IsKeyDown(VK_INSERT) && !tmp)
+        if (IsKeyDown(MenuKey) && !tmp)
         {
             ShowMenu = !ShowMenu;
             tmp = true;
-            change = false;
         }
-        else if (!IsKeyDown(VK_INSERT) && tmp)
+        else if (!IsKeyDown(MenuKey) && tmp)
         {
             tmp = false;
         }
 
-        // ウィンドウスタイルの変更
-        if (ShowMenu && !change)
+        //----// Window Style Changer //---------------------------------------------------------------//
+        // Get window style.
+        LONG TmpWindowLong = GetWindowLong(OverlayHwnd, GWL_EXSTYLE);
+
+        // Check window style.
+        if (ShowMenu && TmpWindowLong != MenuStyle)
+            SetWindowLong(OverlayHwnd, GWL_EXSTYLE, WS_EX_TOPMOST | WS_EX_LAYERED | WS_EX_TOOLWINDOW);
+        else if (!ShowMenu && TmpWindowLong != ESPStyle)
+            SetWindowLong(OverlayHwnd, GWL_EXSTYLE, WS_EX_TOPMOST | WS_EX_TRANSPARENT | WS_EX_LAYERED | WS_EX_TOOLWINDOW);
+
+        //---------------------------------------------------------------------------------------------//
+
+        // Overlay size and position changer.
+        HWND TmpHwnd = FindWindowA(NULL, "Battlefield 4");
+        if (TmpHwnd)
         {
-            SetWindowLong(hwnd, GWL_EXSTYLE, WS_EX_TOPMOST | WS_EX_LAYERED | WS_EX_TOOLWINDOW);
-            change = true;
-
-        }
-        else if (!change)
-        {
-            SetWindowLong(hwnd, GWL_EXSTYLE, WS_EX_TOPMOST | WS_EX_TRANSPARENT | WS_EX_LAYERED | WS_EX_TOOLWINDOW);
-            change = true;
-        }
-
-        CheatFunc();
-
-        HWND bf4 = FindWindow(NULL, L"Battlefield 4");
-        if (bf4)
-        {
-            RECT tRect = {};
-            POINT tPos = {};
-            GetClientRect(bf4, &tRect);
-            ClientToScreen(bf4, &tPos);
-
-            if (GamePos.x != tPos.x || GamePos.x != tPos.y || GameSize.left != tRect.left || GameSize.bottom != tRect.bottom)
+            // Magic
+            if (AutoWindowFocus)
             {
-                SetWindowPos(hwnd, NULL, tPos.x, tPos.y, tRect.right, tRect.bottom, SWP_NOREDRAW);
+                if (ShowMenu && GetForegroundWindow() == TmpHwnd)
+                    SetForegroundWindow(OverlayHwnd);
+                else if (!ShowMenu && GetForegroundWindow() == OverlayHwnd)
+                    SetForegroundWindow(TmpHwnd);
+            }
 
-                GameSize = tRect;
-                GamePos = tPos;
+            RECT TmpRect = {};
+            POINT TmpPoint = {};
+            GetClientRect(TmpHwnd, &TmpRect);
+            ClientToScreen(TmpHwnd, &TmpPoint);
+
+            if (Ct->GamePOINT.x != TmpPoint.x || Ct->GamePOINT.x != TmpPoint.y || Ct->GameSize.left != TmpRect.left || Ct->GameSize.bottom != TmpRect.bottom || Ct->GameSize.top != TmpRect.top || Ct->GameSize.right != TmpRect.right)
+            {
+                Ct->GameSize = TmpRect;
+                Ct->GamePOINT = TmpPoint;
+
+                SetWindowPos(OverlayHwnd, NULL, TmpPoint.x, TmpPoint.y, TmpRect.right, TmpRect.bottom, SWP_NOREDRAW);
             }
         }
-        else  
-            Run = false;
+        else
+        {
+            break;
+        }
+
+        // Run Misc function from Cheat Class.
+        Ct->FuncMisc();
 
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 
+    Run = false;
     ExitThread(0);
 }
 
