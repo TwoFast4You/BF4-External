@@ -4,9 +4,10 @@
 
 ## 機能
 #### ESP
-* Soldier ESP : 2D/3D Box, Line, HealthBar, Distance...
-* Vehicle ESP : 3D Box Only.
+* Soldier ESP : 2D/3D Box, Line, HealthBar, Distance, VisCheck...
+* Vehicle ESP : 3D Box
 #### Misc
+* StreamProof
 * NoRecoil/Spread
 * UnlockAll
 
@@ -20,5 +21,5 @@ A. BF4のアンチチートはプログラムのSigベースの検出を行っ�
 ## ToDo
 このクソみたいなコードを書き直したいが、そんな時間も労力も費やしたくないのが現状である。
 
-![タイトルなし](https://github.com/NCZLL/BF4-External/assets/128302647/1d79c21d-74d1-423b-9271-6bc55951c3a3)
-![image](https://github.com/NCZLL/BF4-External/assets/128302647/68b1e129-35d2-4474-ab75-3b1f6216040a)
+![image](https://github.com/NCZLL/BF4-External/assets/128302647/e6ac92c0-e2b6-4698-b289-891638373e02)
+![image](https://github.com/NCZLL/BF4-External/assets/128302647/fb829529-9a7f-49b2-92ab-d18022da11e4)
