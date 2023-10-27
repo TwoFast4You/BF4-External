@@ -195,6 +195,16 @@ void Cheat::ESP()
         uint64_t ClientSoldier = m.RPM<uint64_t>(ClientPlayer + offset::ClientSoldier);
         uint64_t VehicleEntity = m.RPM<uint64_t>(ClientPlayer + 0x14C0);
 
+        // Spectaror warning - tmp
+        bool spect = m.RPM<bool>(ClientPlayer + offset::Spectator);
+        if (spect)
+        {
+            std::string spc_text = "Spectator found!";
+            ImVec2 SpectextSize = ImGui::CalcTextSize(spc_text.c_str());
+            float SpecTextCentor = SpectextSize.x / 2.f;
+            String(ImVec2(GameSize.right / 2.f - SpecTextCentor, GameSize.bottom), ImColor(1.f, 0.f, 0.f, 1.f), spc_text.c_str());
+        }
+        
         // Vehicle Context 
         AxisAlignedBox VehicleAABB;
         Matrix VehicleTranfsorm;
@@ -233,16 +243,6 @@ void Cheat::ESP()
 
                 DrawAABB(VehicleAABB, VehicleTranfsorm, v_color);
             }
-        }
-
-        // Spectaror warning - tmp
-        bool spect = m.RPM<bool>(ClientPlayer + offset::Spectator);
-        if (spect)
-        {
-            std::string spc_text = "Spectator found!";
-            ImVec2 SpectextSize = ImGui::CalcTextSize(spc_text.c_str());
-            float SpecTextCentor = SpectextSize.x / 2.f;
-            String(ImVec2(GameSize.right / 2.f - SpecTextCentor, GameSize.bottom), ImColor(1.f, 0.f, 0.f, 1.f), spc_text.c_str());
         }
 
         // Health
