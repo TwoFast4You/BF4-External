@@ -188,9 +188,6 @@ void Cheat::ESP()
     // ESP Loop
     for (int i = 0; i < 70; i++)
     {
-        if (!Alive)
-            continue;
-
         uint64_t ClientPlayer = m.RPM<uint64_t>(PlayerEntity + (i * 0x08));
         uint64_t ClientSoldier = m.RPM<uint64_t>(ClientPlayer + offset::ClientSoldier);
         uint64_t VehicleEntity = m.RPM<uint64_t>(ClientPlayer + 0x14C0);
@@ -204,6 +201,9 @@ void Cheat::ESP()
             float SpecTextCentor = SpectextSize.x / 2.f;
             String(ImVec2(GameSize.right / 2.f - SpecTextCentor, GameSize.bottom), ImColor(1.f, 0.f, 0.f, 1.f), spc_text.c_str());
         }
+
+        if (!Alive)
+            continue;
         
         // Vehicle Context 
         AxisAlignedBox VehicleAABB;
