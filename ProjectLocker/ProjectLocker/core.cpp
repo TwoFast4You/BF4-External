@@ -199,7 +199,7 @@ void Cheat::ESP()
             std::string spc_text = "Spectator found!";
             ImVec2 SpectextSize = ImGui::CalcTextSize(spc_text.c_str());
             float SpecTextCentor = SpectextSize.x / 2.f;
-            String(ImVec2(GameSize.right / 2.f - SpecTextCentor, GameSize.bottom), ImColor(1.f, 0.f, 0.f, 1.f), spc_text.c_str());
+            String(ImVec2(GameSize.right / 2.f - SpecTextCentor, 0.f), ImColor(1.f, 0.f, 0.f, 1.f), spc_text.c_str());
         }
 
         if (!Alive)
