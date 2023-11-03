@@ -1,13 +1,14 @@
-# ProjectLocker v3.2
+# ProjectLocker v3.3
 シンプルなBattlefield 4の外部チート。  
 初めてチートを作った時のプロジェクトを流用しているのでちょっとアレなコードのところはあるかもね。  
 
 ## 機能
 #### ESP
-* Soldier ESP : 2D/3D Box, Line, HealthBar, Distance, VisCheck...
+* Soldier ESP : 2D/3D Box, BoxFilled, Line, HealthBar, Distance, VisCheck...
 * Vehicle ESP : 3D Box
 #### Misc
 * StreamProof
+* Spectator NameList
 * NoRecoil/Spread
 * UnlockAll
 
