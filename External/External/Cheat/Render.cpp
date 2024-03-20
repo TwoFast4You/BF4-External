@@ -337,6 +337,7 @@ void Cheat::RenderMenu()
             ImGui::SliderInt("RainbowRate", &cfg.RainbowRate, 1, 200);
 
             ImGui::Text("  Game");
+            ImGui::Separator();
             ImGui::Text("Coming Soon...");
             
             ImGui::EndChild();
@@ -347,6 +348,8 @@ void Cheat::RenderMenu()
 
             ImGui::Text("Coming Soon...");
 
+            ImGui::EndChild();
+            /*---------------*/
             ImGui::EndTabItem();
         }
 
