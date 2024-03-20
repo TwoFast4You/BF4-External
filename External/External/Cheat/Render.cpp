@@ -3,7 +3,6 @@
 #include "..\Overlay\Overlay.h"
 #include "..\Utils\Image\NaziRussia.h"
 #include "..\ImGui\Font\RobotoLight.h"
-#include "..\ImGui\Font\RobotoMedium.h"
 #include <WICTextureLoader.h>
 #include <filesystem>
 using namespace DirectX;
@@ -17,7 +16,6 @@ const char* AimKeyTypeList[] = { "and", "or" };
 
 // Resource
 ImFont* Light = nullptr;
-ImFont* Medium = nullptr;
 ID3D11ShaderResourceView* LogoImage = nullptr;
 
 // Functions
@@ -35,15 +33,14 @@ bool Cheat::Init()
     // LoadFonts
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     Light = io.Fonts->AddFontFromMemoryCompressedTTF(RobotoLight_compressed_data, RobotoLight_compressed_size, 15.f, nullptr);
-    Medium = io.Fonts->AddFontFromMemoryCompressedTTF(RobotoMed_compressed_data, RobotoMed_compressed_size, 15.f, nullptr);
     io.Fonts->Build();
 
-    // ‰æ‘œ‚ğƒ[ƒh
+    // ç”»åƒã‚’ãƒ­ãƒ¼ãƒ‰
     LoadImageByMemory(g_pd3dDevice, NaziRawData, sizeof(NaziRawData), &LogoImage);
 
     game = FindWindowA(nullptr, "Battlefield 4");
 
-    // ConfigƒtƒHƒ‹ƒ_‚Ì‘¶İ‚ğƒ`ƒFƒbƒN
+    // Configãƒ•ã‚©ãƒ«ãƒ€ã®å­˜åœ¨ã‚’ãƒã‚§ãƒƒã‚¯
     if (!cfmg.CheckDir(ConfigPath))
         system("mkdir Config");
 
@@ -96,7 +93,7 @@ void Cheat::RenderMenu()
     static int menu = 0;
 
     ImGui::SetNextWindowSize(ImVec2(750.f, 500.f));
-    ImGui::Begin("EastWare  -  Battlefield 4", &cfg.ShowMenu, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
+    ImGui::Begin("ProjectLocker v4.0", &cfg.ShowMenu, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
 
     //---// Clild 0 //-----------------------------------//
     ImGui::BeginChild("##BaseChild", ImVec2(150.f, ImGui::GetContentRegionAvail().y), false);
@@ -118,7 +115,7 @@ void Cheat::RenderMenu()
     static int FileNum = 0;
     static char InputName[12];
 
-    // ConfigƒtƒHƒ‹ƒ_“à‚Ì.iniƒtƒ@ƒCƒ‹‚ğæ“¾AƒŠƒXƒg‰»
+    // Configãƒ•ã‚©ãƒ«ãƒ€å†…ã®.iniãƒ•ã‚¡ã‚¤ãƒ«ã‚’å–å¾—ã€ãƒªã‚¹ãƒˆåŒ–
     auto vec = cfmg.GetFileList(ConfigPath); 
     const char** FileList = new const char* [vec.size()];
 
@@ -340,34 +337,15 @@ void Cheat::RenderMenu()
             ImGui::SliderInt("RainbowRate", &cfg.RainbowRate, 1, 200);
 
             ImGui::Text("  Game");
-            ImGui::Separator();
-            ImGui::Spacing();
-            ImGui::Checkbox("ViewModelGlow", &cfg.ViewModelGlow);
-            ImGui::Checkbox("Rapidfire", &cfg.Rapidfire);
-            ImGui::Checkbox("NoRecoil", &cfg.NoRecoil);
+            ImGui::Text("Coming Soon...");
+            
             ImGui::EndChild();
             /*---------------*/
             ImGui::SameLine();
             /*---------------*/
             ImGui::BeginChild("##RightMiscBase", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y), false);
 
-            ImGui::Text("   ViewModel");
-            ImGui::Separator();
-            ImGui::Spacing();
-            ImGui::Checkbox("ViewModelGlow", &cfg.ViewModelGlow);
-            ImGui::Checkbox("Rainbow##ViewModel", &cfg.RainbowViewModel);
-
-            ImGui::NewLine();
-            ImGui::Spacing();
-
-            ImGui::Text("   NoRecoil");
-            ImGui::Separator();
-            ImGui::Spacing();
-            ImGui::Checkbox("NoRecoil", &cfg.NoRecoil);
-            ImGui::SliderFloat("Recoil", &cfg.NoRecoilVal, 0.f, 1.f);
-
-            ImGui::EndChild();
-            /*---------------*/
+            ImGui::Text("Coming Soon...");
 
             ImGui::EndTabItem();
         }
