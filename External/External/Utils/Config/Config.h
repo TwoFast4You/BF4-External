@@ -22,7 +22,6 @@ struct Config
     float AimFov = 150.f;
     int Smooth = 1;
     float Aim_MaxDistance = 150.f;
-    int PredictVal = 450;
     int AimType = 0;
     int AimKeyType = 1;
 
@@ -47,16 +46,8 @@ struct Config
     int RainbowRate = 25;
 
     // Misc
-    bool Rapidfire = false;
-    bool NoRecoil = false;
-    float NoRecoilVal = 1.f;
-    bool ViewModelGlow = true;
-    bool RainbowViewModel = true;
-
-    // SpeedHack
-    bool SpeedHack = false;
-    float Speed = 6.f;
-    int DownTime = 0;
+    bool SwayEditor = false;
+    float SEVal= 1.f;
 
     // Key
     int MenuKey = VK_INSERT;
