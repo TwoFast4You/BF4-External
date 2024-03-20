@@ -43,7 +43,7 @@ void ConfigManager::SaveSetting(std::string filename)
 
     mINI::INIFile file(path.c_str());
 
-    // config.iniの存在をチェック
+    // config.ini縺ｮ蟄伜惠繧偵メ繧ｧ繝�繧ｯ
     if (!std::filesystem::is_regular_file(path.c_str()))
         file.generate(ini, true);
     else
@@ -61,7 +61,6 @@ void ConfigManager::SaveSetting(std::string filename)
     ini["aimbot"]["fov"] = std::to_string(cfg.AimFov).c_str();
     ini["aimbot"]["smooth"] = std::to_string(cfg.Smooth).c_str();
     ini["aimbot"]["distance"] = std::to_string(cfg.Aim_MaxDistance).c_str();
-    ini["aimbot"]["prediction"] = std::to_string(cfg.PredictVal).c_str();
     ini["aimbot"]["aimtype"] = std::to_string(cfg.AimType).c_str();
     ini["aimbot"]["aimkeytyle"] = std::to_string(cfg.AimKeyType).c_str();
 
@@ -79,11 +78,8 @@ void ConfigManager::SaveSetting(std::string filename)
 
     // System
     ini["system"]["streamproof"] = std::to_string(cfg.StreamProof).c_str();
-    ini["system"]["rapidfire"] = std::to_string(cfg.Rapidfire).c_str();
     ini["system"]["norecoil"] = std::to_string(cfg.NoRecoil).c_str();
     ini["system"]["recoilvalue"] = std::to_string(cfg.NoRecoilVal).c_str();
-    ini["system"]["viewmodelglow"] = std::to_string(cfg.ViewModelGlow).c_str();
-    ini["system"]["viewmodelrainbow"] = std::to_string(cfg.RainbowViewModel).c_str();
 
     // Keys
     ini["key"]["aim0"] = std::to_string(cfg.AimKey0).c_str();
@@ -100,7 +96,7 @@ void ConfigManager::LoadSetting(std::string filename)
     std::string path = ".\\Config\\" + filename;
     mINI::INIFile file(path.c_str());
 
-    // config.iniの存在をチェック
+    // config.ini縺ｮ蟄伜惠繧偵メ繧ｧ繝�繧ｯ
     if (!std::filesystem::is_regular_file(path.c_str()))
         file.generate(ini, true);
     else
@@ -118,7 +114,6 @@ void ConfigManager::LoadSetting(std::string filename)
     std::istringstream(ini["aimbot"]["fov"]) >> cfg.AimFov;
     std::istringstream(ini["aimbot"]["smooth"]) >> cfg.Smooth;
     std::istringstream(ini["aimbot"]["distance"]) >> cfg.Aim_MaxDistance;
-    std::istringstream(ini["aimbot"]["prediction"]) >> cfg.PredictVal;
     std::istringstream(ini["aimbot"]["aimtype"]) >> cfg.AimType;
     std::istringstream(ini["aimbot"]["aimkeytyle"]) >> cfg.AimKeyType;
 
@@ -136,11 +131,8 @@ void ConfigManager::LoadSetting(std::string filename)
 
     // System
     std::istringstream(ini["system"]["streamproof"]) >> cfg.StreamProof;
-    std::istringstream(ini["system"]["rapidfire"]) >> cfg.Rapidfire;
     std::istringstream(ini["system"]["norecoil"]) >> cfg.NoRecoil;
     std::istringstream(ini["system"]["recoilvalue"]) >> cfg.NoRecoilVal;
-    std::istringstream(ini["system"]["viewmodelglow"]) >> cfg.ViewModelGlow;
-    std::istringstream(ini["system"]["viewmodelrainbow"]) >> cfg.RainbowViewModel;
 
     // Keys
     std::istringstream(ini["key"]["aim0"]) >> cfg.AimKey0;
