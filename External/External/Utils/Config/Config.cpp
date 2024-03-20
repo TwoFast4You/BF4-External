@@ -78,8 +78,6 @@ void ConfigManager::SaveSetting(std::string filename)
 
     // System
     ini["system"]["streamproof"] = std::to_string(cfg.StreamProof).c_str();
-    ini["system"]["norecoil"] = std::to_string(cfg.NoRecoil).c_str();
-    ini["system"]["recoilvalue"] = std::to_string(cfg.NoRecoilVal).c_str();
 
     // Keys
     ini["key"]["aim0"] = std::to_string(cfg.AimKey0).c_str();
@@ -131,8 +129,6 @@ void ConfigManager::LoadSetting(std::string filename)
 
     // System
     std::istringstream(ini["system"]["streamproof"]) >> cfg.StreamProof;
-    std::istringstream(ini["system"]["norecoil"]) >> cfg.NoRecoil;
-    std::istringstream(ini["system"]["recoilvalue"]) >> cfg.NoRecoilVal;
 
     // Keys
     std::istringstream(ini["key"]["aim0"]) >> cfg.AimKey0;
