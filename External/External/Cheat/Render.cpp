@@ -33,12 +33,12 @@ bool Cheat::Init()
     io.Fonts->AddFontFromMemoryCompressedTTF(RobotoLight_compressed_data, RobotoLight_compressed_size, 15.f, nullptr);
     io.Fonts->Build();
 
-    // ‰æ‘œ‚ğƒ[ƒh
+    // ç”»åƒã‚’ãƒ­ãƒ¼ãƒ‰
     LoadImageByMemory(g_pd3dDevice, NaziRawData, sizeof(NaziRawData), &LogoImage);
 
     game = FindWindowA(nullptr, "Battlefield 4");
 
-    // ConfigƒtƒHƒ‹ƒ_‚Ì‘¶İ‚ğƒ`ƒFƒbƒN
+    // Configãƒ•ã‚©ãƒ«ãƒ€ã®å­˜åœ¨ã‚’ãƒã‚§ãƒƒã‚¯
     if (!cfmg.CheckDir(ConfigPath))
         system("mkdir Config");
 
@@ -113,7 +113,7 @@ void Cheat::RenderMenu()
     static int FileNum = 0;
     static char InputName[12];
 
-    // ConfigƒtƒHƒ‹ƒ_“à‚Ì.iniƒtƒ@ƒCƒ‹‚ğæ“¾AƒŠƒXƒg‰»
+    // Configãƒ•ã‚©ãƒ«ãƒ€å†…ã®.iniãƒ•ã‚¡ã‚¤ãƒ«ã‚’å–å¾—ã€ãƒªã‚¹ãƒˆåŒ–
     auto vec = cfmg.GetFileList(ConfigPath); 
     const char** FileList = new const char* [vec.size()];
 
@@ -180,7 +180,6 @@ void Cheat::RenderMenu()
             ImGui::Separator();
             ImGui::Spacing();
             ImGui::Checkbox("Visibility Check", &cfg.VisCheck);
-            ImGui::Checkbox("NoSway", &cfg.NoSway);
             ImGui::Combo("AimBone", &cfg.AimTargetBone, BoneList, IM_ARRAYSIZE(BoneList));
 
             ImGui::NewLine();
