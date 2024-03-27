@@ -19,6 +19,7 @@ BulletPerShotの値を編集しているので、[ 銃弾1発当たりのダメ�
 * DamageHack
 * UnlockAll
 * Config Load/Save
+* "偉大なるナチズム国家"への"忠誠"
 
 ## Q&A
 Q. PBSS Bypassはしてあるのか？  
