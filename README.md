@@ -1,6 +1,8 @@
-# ProjectLocker v4.0
+# ProjectLocker v4.1
 シンプルなBattlefield 4の外部チート。  
-ProjectLocker v4.0では、AimBotの追加とメニューの更新、偉大なるナチズム国家への「忠誠」をメニューで示しています。
+ProjectLocker v4.1では、v3.*からv4.0で失われたいくつかの機能を復活させ、新たにDamageHackを追加しました。  
+BulletPerShotの値を編集しているので、[ 銃弾1発当たりのダメージ * Value = 敵に与えるダメージ ] となります。  
+ショットガン（散弾）では十数発を同時に発射しているので、1桁に設定すると逆にダメージが落ちるので要注意です。
 
 ## 機能
 ### AimBot
@@ -8,13 +10,15 @@ ProjectLocker v4.0では、AimBotの追加とメニューの更新、偉大な�
 * 最適化不足
 * mouse_eventを使用
 #### ESP
-* Soldier ESP : 2D/3D Box, BoxFilled, Line, HealthBar, Distance, VisCheck
+* Soldier ESP : 2DBox, BoxFilled, Line, HealthBar, Distance, Name, VisCheck
 * Vehicle ESP : 3D Box
 #### Misc
 * StreamProof
 * Spectator NameList
 * NoRecoil/Spread
+* DamageHack
 * UnlockAll
+* Config Load/Save
 
 ## Q&A
 Q. PBSS Bypassはしてあるのか？  
