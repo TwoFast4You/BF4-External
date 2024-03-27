@@ -43,7 +43,7 @@ void ConfigManager::SaveSetting(std::string filename)
 
     mINI::INIFile file(path.c_str());
 
-    // config.iniの存在をチェック
+    // config.ini縺ｮ蟄伜惠繧偵メ繧ｧ繝�繧ｯ
     if (!std::filesystem::is_regular_file(path.c_str()))
         file.generate(ini, true);
     else
@@ -53,7 +53,6 @@ void ConfigManager::SaveSetting(std::string filename)
     ini["aimbot"]["enable"] = std::to_string(cfg.AimBot).c_str();
     ini["aimbot"]["aimatteam"] = std::to_string(cfg.AimAtTeam).c_str();
     ini["aimbot"]["vischeck"] = std::to_string(cfg.VisCheck).c_str();
-    ini["aimbot"]["nosway"] = std::to_string(cfg.NoSway).c_str();
     ini["aimbot"]["targetbone"] = std::to_string(cfg.AimTargetBone).c_str();
     ini["aimbot"]["drawfov"] = std::to_string(cfg.DrawFov).c_str();
     ini["aimbot"]["rainbowfov"] = std::to_string(cfg.RainbowFov).c_str();
@@ -67,17 +66,27 @@ void ConfigManager::SaveSetting(std::string filename)
     // Visual
     ini["visual"]["enable"] = std::to_string(cfg.PlayerESP).c_str();
     ini["visual"]["team"] = std::to_string(cfg.TeamESP).c_str();
-
+    ini["visual"]["vehicle"] = std::to_string(cfg.VehicleESP).c_str();
     ini["visual"]["box"] = std::to_string(cfg.ESP_Box).c_str();
     ini["visual"]["boxfilled"] = std::to_string(cfg.ESP_BoxFilled).c_str();
     ini["visual"]["line"] = std::to_string(cfg.ESP_Line).c_str();
     ini["visual"]["distance"] = std::to_string(cfg.ESP_Distance).c_str();
+    ini["visual"]["name"] = std::to_string(cfg.ESP_Name).c_str();
     ini["visual"]["healthbar"] = std::to_string(cfg.ESP_HealthBar).c_str();
+    ini["visual"]["skeleton"] = std::to_string(cfg.ESP_Skeleton).c_str();
     ini["visual"]["maxdistance"] = std::to_string(cfg.ESP_MaxDistance).c_str();
     ini["visual"]["boxtype"] = std::to_string(cfg.ESP_BoxType).c_str();
 
-    // System
-    ini["system"]["streamproof"] = std::to_string(cfg.StreamProof).c_str();
+    // Misc
+    ini["misc"]["streamproof"] = std::to_string(cfg.StreamProof).c_str();
+    ini["misc"]["crosshair"] = std::to_string(cfg.Crosshair).c_str();
+    ini["misc"]["crosshairtype"] = std::to_string(cfg.CrosshairType).c_str();
+    ini["misc"]["rainbowrate"] = std::to_string(cfg.RainbowRate).c_str();
+    ini["misc"]["unlockall"] = std::to_string(cfg.UnlockAll).c_str();
+    ini["misc"]["swaymod"] = std::to_string(cfg.SwayModify).c_str();
+    ini["misc"]["swayvalue"] = std::to_string(cfg.ModVal).c_str();
+    ini["misc"]["damagehack"] = std::to_string(cfg.DamageHack).c_str();
+    ini["misc"]["bps"] = std::to_string(cfg.ModBPS).c_str();
 
     // Keys
     ini["key"]["aim0"] = std::to_string(cfg.AimKey0).c_str();
@@ -94,7 +103,7 @@ void ConfigManager::LoadSetting(std::string filename)
     std::string path = ".\\Config\\" + filename;
     mINI::INIFile file(path.c_str());
 
-    // config.iniの存在をチェック
+    // config.ini縺ｮ蟄伜惠繧偵メ繧ｧ繝�繧ｯ
     if (!std::filesystem::is_regular_file(path.c_str()))
         file.generate(ini, true);
     else
@@ -104,7 +113,6 @@ void ConfigManager::LoadSetting(std::string filename)
     std::istringstream(ini["aimbot"]["enable"]) >> cfg.AimBot;
     std::istringstream(ini["aimbot"]["aimatteam"]) >> cfg.AimAtTeam;
     std::istringstream(ini["aimbot"]["vischeck"]) >> cfg.VisCheck;
-    std::istringstream(ini["aimbot"]["nosway"]) >> cfg.NoSway;
     std::istringstream(ini["aimbot"]["targetbone"]) >> cfg.AimTargetBone;
     std::istringstream(ini["aimbot"]["drawfov"]) >> cfg.DrawFov;
     std::istringstream(ini["aimbot"]["rainbowfov"]) >> cfg.RainbowFov;
@@ -118,18 +126,27 @@ void ConfigManager::LoadSetting(std::string filename)
     // Visual
     std::istringstream(ini["visual"]["enable"]) >> cfg.PlayerESP;
     std::istringstream(ini["visual"]["team"]) >> cfg.TeamESP;
-
+    std::istringstream(ini["visual"]["vehicle"]) >> cfg.VehicleESP;
     std::istringstream(ini["visual"]["box"]) >> cfg.ESP_Box;
     std::istringstream(ini["visual"]["boxfilled"]) >> cfg.ESP_BoxFilled;
     std::istringstream(ini["visual"]["line"]) >> cfg.ESP_Line;
     std::istringstream(ini["visual"]["distance"]) >> cfg.ESP_Distance;
+    std::istringstream(ini["visual"]["name"]) >> cfg.ESP_Name;
     std::istringstream(ini["visual"]["healthbar"]) >> cfg.ESP_HealthBar;
+    std::istringstream(ini["visual"]["skeleton"]) >> cfg.ESP_Skeleton;
     std::istringstream(ini["visual"]["maxdistance"]) >> cfg.ESP_MaxDistance;
     std::istringstream(ini["visual"]["boxtype"]) >> cfg.ESP_BoxType;
 
     // System
     std::istringstream(ini["system"]["streamproof"]) >> cfg.StreamProof;
-
+    std::istringstream(ini["misc"]["crosshair"]) >> cfg.Crosshair;
+    std::istringstream(ini["misc"]["crosshairtype"]) >> cfg.CrosshairType;
+    std::istringstream(ini["misc"]["rainbowrate"]) >> cfg.RainbowRate;
+    std::istringstream(ini["misc"]["unlockall"]) >> cfg.UnlockAll;
+    std::istringstream(ini["misc"]["swaymod"]) >> cfg.SwayModify;
+    std::istringstream(ini["misc"]["swayvalue"]) >> cfg.ModVal;
+    std::istringstream(ini["misc"]["damagehack"]) >> cfg.DamageHack;
+    std::istringstream(ini["misc"]["bps"]) >> cfg.ModBPS;
 
     // Keys
     std::istringstream(ini["key"]["aim0"]) >> cfg.AimKey0;
