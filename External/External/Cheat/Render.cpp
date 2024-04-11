@@ -455,10 +455,10 @@ void Cheat::RenderESP()
         m.ReadString(pEntity->ClientPlayer + offset::PlayerName, &pName, sizeof(pName));
 
         // Spectaror Warning
-        //if (pEntity->IsSpectator())
+        if (pEntity->IsSpectator())
         {
             NameList.push_back(pName);
-            //continue;
+            continue;
         }
 
         // Invalid Player
