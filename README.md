@@ -1,8 +1,5 @@
-# ProjectLocker v4.1
+# ProjectLocker v4.2
 シンプルなBattlefield 4の外部チート。  
-ProjectLocker v4.1では、v3.*からv4.0で失われたいくつかの機能を復活させ、新たにDamageHackを追加しました。  
-BulletPerShotの値を編集しているので、[ 銃弾1発当たりのダメージ * Value = 敵に与えるダメージ ] となります。  
-ショットガン（散弾）では十数発を同時に発射しているので、1桁に設定すると逆にダメージが落ちるので要注意です。
 
 ## 機能
 ### AimBot
