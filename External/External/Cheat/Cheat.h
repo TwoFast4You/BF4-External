@@ -84,7 +84,6 @@ private:
     {
         ImGui::GetBackgroundDrawList()->AddCircle(ImVec2(x / 2.f, y / 2.f), fov_size, color, 100, size);
     }
-
     void DrawAABB(AxisAlignedBox aabb, Matrix tranform, ImColor color);
 };
 

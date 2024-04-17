@@ -43,16 +43,20 @@ public:
 class Player
 {
 public:
+    // ptr
     uint64_t ClientPlayer;
     uint64_t ClientSoldier;
     uint64_t ClientVehicle;
 
+    // PlayerData
     int Team;
+    std::string Name;
     HealthComponent TmpComponent;
     HealthComponent* HealthBase = &TmpComponent;
     Vector3 Position;
     bool Occlude;
     int Pose;
+    uint64_t pQuat;
 
     Matrix VehicleTranfsorm;
     AxisAlignedBox SoldierAABB;
@@ -74,10 +78,16 @@ public:
     {
         return HealthBase->m_Health <= 0.f && Position == Vector3(0.f, 0.f, 0.f);
     }
-    Vector3 GetVelocity()
+    std::string GetName()
     {
-        uint64_t TmpPosition = m.Read<uint64_t>(ClientSoldier + 0x490);
-        return  m.Read<Vector3>(TmpPosition + 0x50);
+        char pName[128];
+        m.ReadString(ClientPlayer + offset::PlayerName, &pName, sizeof(pName));
+
+        return pName;
+    }
+    uint64_t GetQuat()
+    {
+       return m.Read<uint64_t>(m.Read<uint64_t>(ClientSoldier + 0x580) + 0xB0);
     }
     void Update()
     {
@@ -105,19 +115,22 @@ public:
         }
         else // Soldier
         {
-            uint64_t TmpPosition = m.Read<uint64_t>(ClientSoldier + 0x490);
-            Position = m.Read<Vector3>(TmpPosition + 0x30);
+            Position = m.Read<Vector3>(m.Read<uint64_t>(ClientSoldier + 0x490) + 0x30);
         }
 
         // Visible
         Occlude = m.Read<bool>(ClientSoldier + 0x5B1);
         Pose = m.Read<int>(ClientSoldier + 0x4F0);
+        pQuat = GetQuat();
+        Name = GetName();
     }
-
+    Vector3 GetBone(int bone_id)
+    {
+        return m.Read<Vector3>(this->pQuat + bone_id * 0x20);
+    }
     AxisAlignedBox GetAABB()
     {
         AxisAlignedBox aabb = AxisAlignedBox();
-        
 
         switch (Pose)
         {
@@ -139,22 +152,10 @@ public:
 
         return aabb;
     }
-
-    Vector3 GetBone(int bone_id)
-    {
-        Vector3 out;
-        uint64_t ragdoll_component = m.Read<uint64_t>(ClientSoldier + 0x580);
-        if (!ragdoll_component)
-            return Vector3(0, 0, 0);
-
-        uint64_t quat = m.Read<uint64_t>(ragdoll_component + 0xB0);
-        if (!quat)
-            return Vector3(0, 0, 0);
-
-        return m.Read<Vector3>(quat + bone_id * 0x20);
-    }
+   
 };
 
+bool UpdateW2SData();
 extern float GetDistance(Vector3 value1, Vector3 value2);
 extern bool WorldToScreen(const Vector3& WorldPos, Vector2& ScreenPos);
 extern bool WorldToScreen(const Vector3& WorldPos, Vector3& ScreenPos);

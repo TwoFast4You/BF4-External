@@ -42,9 +42,14 @@ void Cheat::Misc()
     while (cfg.Run)
     {
         uint64_t SyncBFSetting = m.Read<uint64_t>(offset::SyncBFSetting);
+
+        // UnlockAll
+        if (cfg.UnlockAll && SyncBFSetting != 0 && m.Read<bool>(SyncBFSetting + 0x54) == false)
+            m.Write<bool>(SyncBFSetting + 0x54, true);
+
         uint64_t Weapon = m.Read<uint64_t>(offset::ClientWeapons);
 
-        if (!Weapon || !SyncBFSetting)
+        if (!Weapon)
         {
             Sleep(10);
             continue;
@@ -70,10 +75,6 @@ void Cheat::Misc()
             m.Write<float>(GunSwayData + 0x434, 1.f);
             m.Write<float>(GunSwayData + 0x43C, 1.f);
         }
-
-        // UnlockAll
-        if (cfg.UnlockAll && SyncBFSetting != 0 && m.Read<bool>(SyncBFSetting + 0x54) == false)
-            m.Write<bool>(SyncBFSetting + 0x54, true);
 
         Sleep(10);
     }

@@ -1,5 +1,30 @@
 #include "SDK.h"
 
+int ScreenWidth = 0;
+int ScreenHeight = 0;
+Matrix view_x_projection = {};
+
+bool UpdateW2SData()
+{
+    uint64_t GameRenderer = m.Read<uint64_t>(offset::GameRenderer);
+    uint64_t RenderView = m.Read<uint64_t>(GameRenderer + 0x60);
+
+    if (RenderView == 0)
+        return false;
+
+    uint64_t DXRenderer = m.Read<uint64_t>(offset::DxRenderer);
+    uint64_t m_pScreen = m.Read<uint64_t>(DXRenderer + 0x38);
+
+    if (m_pScreen == 0)
+        return false;
+
+    view_x_projection = m.Read<Matrix>(RenderView + 0x420);
+    ScreenWidth = m.Read<int>(m_pScreen + 0x58);
+    ScreenHeight = m.Read<int>(m_pScreen + 0x5C);
+    
+    return true;
+}
+
 float GetDistance(Vector3 value1, Vector3 value2)
 {
     float num = value1.x - value2.x;

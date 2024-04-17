@@ -7,6 +7,12 @@ ID3D11DeviceContext* g_pd3dDeviceContext = NULL;
 IDXGISwapChain* g_pSwapChain = NULL;
 ID3D11RenderTargetView* g_mainRenderTargetView = NULL;
 
+void CleanupDeviceD3D();
+void CreateRenderTarget();
+void CleanupRenderTarget();
+bool CreateDeviceD3D(HWND hWnd);
+LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 bool Overlay::CreateOverlay()
 {
     // Get ClientSize
@@ -126,7 +132,7 @@ void Overlay::OverlayManager()
             SetWindowPos(Hwnd, nullptr, TmpPoint.x, TmpPoint.y, cfg.GameRect.right, cfg.GameRect.bottom, SWP_NOREDRAW);
         }
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        Sleep(2);
     }
 }
 

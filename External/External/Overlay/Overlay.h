@@ -14,8 +14,8 @@ private:
 	// OverlayWindow
 	WNDCLASSEXA wc;
 	HWND Hwnd;
-	char Title[16] = "Overlay";
-	char Class[16] = "WND";
+	char Title[16] = "UnvOverlay";
+	char Class[16] = "Window";
 	char TargetTitle[64] = "Battlefield 4";
 public:
 	HWND GHwnd;
@@ -31,8 +31,3 @@ extern ID3D11DeviceContext* g_pd3dDeviceContext;
 extern IDXGISwapChain* g_pSwapChain;
 extern ID3D11RenderTargetView* g_mainRenderTargetView;
 
-extern void CleanupDeviceD3D();
-extern void CreateRenderTarget();
-extern void CleanupRenderTarget();
-extern bool CreateDeviceD3D(HWND hWnd);
-extern LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);

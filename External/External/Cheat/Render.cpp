@@ -86,6 +86,12 @@ void Cheat::RenderInfo()
         }
     }
 
+    if (NameList.size() != 0)
+    {
+        std::string spcw = "[ Spectator Found! ]";
+        String(ImVec2(cfg.GameRect.right / 2.f - (ImGui::CalcTextSize(spcw.c_str()).x / 2.f), 0.f), ImColor(1.f, 0.f, 0.f, 1.f), spcw.c_str());
+    }
+
     ImGui::End();
 }
 
@@ -448,6 +454,7 @@ void Cheat::RenderESP()
     // LocalPlayer
     pLocal->ClientPlayer = m.Read<uint64_t>(PlayerManager + offset::LocalPlayer);
     pLocal->Update();
+    UpdateW2SData();
 
     NameList.clear();
 
@@ -462,14 +469,10 @@ void Cheat::RenderESP()
         pEntity->ClientPlayer = m.Read<uint64_t>(PlayerEntity + (i * 0x08));
         pEntity->Update();
 
-        // GetName
-        char pName[128];
-        m.ReadString(pEntity->ClientPlayer + offset::PlayerName, &pName, sizeof(pName));
-
         // Spectaror Warning
         if (pEntity->IsSpectator())
         {
-            NameList.push_back(pName);
+            NameList.push_back(pEntity->Name);
             continue;
         }
 
@@ -610,7 +613,7 @@ void Cheat::RenderESP()
         
             // Name
             if (cfg.ESP_Name)
-                String(ImVec2(BoxTop.x - (ImGui::CalcTextSize(pName).x / 2.f), (BoxTop.y - ImGui::CalcTextSize(pName).y) - 2.f), ImColor(1.f, 1.f, 1.f, 1.f), pName);
+                String(ImVec2(BoxTop.x - (ImGui::CalcTextSize(pEntity->Name.c_str()).x / 2.f), (BoxTop.y - ImGui::CalcTextSize(pEntity->Name.c_str()).y) - 2.f), ImColor(1.f, 1.f, 1.f, 1.f), pEntity->Name.c_str());
 
             // AimBot
             if (cfg.AimBot)

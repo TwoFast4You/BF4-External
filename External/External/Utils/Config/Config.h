@@ -6,9 +6,9 @@ struct Config
 {
     // Status
     bool Run = false;
+    bool ShowMenu = false;
     RECT GameRect;
     POINT GamePoint;
-    bool ShowMenu = false;
     int CurrentBPS = 0;
 
     // AimBot
