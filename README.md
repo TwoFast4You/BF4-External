@@ -1,5 +1,6 @@
-# ProjectLocker v4.2
+# ProjectLocker v4.3
 シンプルなBattlefield 4の外部チート。  
+パフォーマンスを改善し、いくつかのバグを修正しました。
 
 ## 機能
 ### AimBot
